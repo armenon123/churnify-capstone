@@ -1,0 +1,76 @@
+# Churnify theme — violet-accented SaaS dashboard, light + dark.
+# Dark surfaces are deep navy; the single brand accent is violet.
+# Semantic green = retained, red = churn risk. Users can toggle
+# light/dark from the Streamlit settings menu.
+
+[theme]
+primaryColor = "#6B5DF0"
+font = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap"
+codeFont = "'JetBrains Mono':https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+baseFontSize = 15
+baseRadius = "10px"
+buttonRadius = "10px"
+showWidgetBorder = true
+showSidebarBorder = true
+headingFontSizes = ["28px", "22px", "18px", "16px", "14px", "13px"]
+headingFontWeights = [700, 700, 600, 600, 500, 500]
+metricValueFontSize = "2.1rem"
+metricValueFontWeight = 700
+linkUnderline = false
+
+# ── Light mode ────────────────────────────────────────────────
+[theme.light]
+primaryColor = "#6B5DF0"
+backgroundColor = "#F6F7FB"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1B2030"
+linkColor = "#5B4FE0"
+borderColor = "#E7E9F3"
+codeBackgroundColor = "#F1F2F9"
+codeTextColor = "#4B3FD0"
+redColor = "#DC2F3A"
+greenColor = "#0E9E6E"
+yellowColor = "#B7791F"
+orangeColor = "#C2410C"
+blueColor = "#2563EB"
+violetColor = "#6B5DF0"
+grayColor = "#6B7280"
+chartCategoricalColors = ["#6B5DF0", "#D97706", "#C2410C", "#DC2F3A", "#8B5CF6", "#6B7280"]
+dataframeHeaderBackgroundColor = "#F1F2F9"
+dataframeHeaderTextColor = "#1B2030"
+dataframeBorderColor = "#E7E9F3"
+
+[theme.light.sidebar]
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F3F2FD"
+borderColor = "#E7E9F3"
+primaryColor = "#6B5DF0"
+
+# ── Dark mode ─────────────────────────────────────────────────
+[theme.dark]
+primaryColor = "#7B6CF6"
+backgroundColor = "#0B0E16"
+secondaryBackgroundColor = "#151A28"
+textColor = "#E8EAF1"
+linkColor = "#9A8CF8"
+borderColor = "#242B3D"
+codeBackgroundColor = "#1A2030"
+codeTextColor = "#B8AEFB"
+redColor = "#F87171"
+greenColor = "#34D399"
+yellowColor = "#FBBF24"
+orangeColor = "#FB923C"
+blueColor = "#60A5FA"
+violetColor = "#A78BFA"
+grayColor = "#94A3B8"
+chartCategoricalColors = ["#A78BFA", "#F6B93B", "#FB923C", "#F87171", "#C4B5FD", "#94A3B8"]
+dataframeHeaderBackgroundColor = "#1A2030"
+dataframeHeaderTextColor = "#E8EAF1"
+dataframeBorderColor = "#242B3D"
+
+[theme.dark.sidebar]
+backgroundColor = "#0E121D"
+secondaryBackgroundColor = "#171D2C"
+borderColor = "#242B3D"
+primaryColor = "#7B6CF6"

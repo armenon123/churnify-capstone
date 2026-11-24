@@ -1,20 +1,18 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import joblib
 import os
-import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use("Agg")
 
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Telecom Churn Predictor",
-    page_icon="📡",
+    page_icon="assets/icon.svg",
     layout="wide",
 )
 
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "models")
+ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
+
 
 # ── Load saved artifacts ───────────────────────────────────────────────────────
 @st.cache_resource
@@ -26,13 +24,16 @@ def load_artifacts():
     res  = joblib.load(os.path.join(MODELS_DIR, "model_results.pkl"))
     return pre, {"Logistic Regression": lr, "KNN": knn, "Decision Tree": dt}, res
 
+
 try:
     preprocessor, model_map, model_results = load_artifacts()
     models_ready = True
 except FileNotFoundError:
+    preprocessor, model_map, model_results = None, {}, {}
     models_ready = False
 
-# ── Preprocessing helper ──────────────────────────────────────────────────────
+
+# ── Preprocessing helper (model logic — unchanged) ─────────────────────────────
 def preprocess_input(df_raw: pd.DataFrame) -> pd.DataFrame:
     df = df_raw.copy()
 
@@ -90,61 +91,58 @@ def predict(df_processed: pd.DataFrame, model_name: str):
     return preds, proba
 
 
-# ── Header ────────────────────────────────────────────────────────────────────
-st.title("📡 Telecom Customer Churn Predictor")
-st.markdown(
-    "Predict whether a customer is likely to leave (churn) based on their account details. "
-    "Built with **Logistic Regression**, **KNN**, and **Decision Tree** models."
-)
-
-if not models_ready:
-    st.error(
-        "**Models not found.** Please run `python train_models.py` inside the `hs-churn-predictor/` folder first."
-    )
-    st.stop()
-
-# ── Tabs ──────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3 = st.tabs(["🔍 Predict Single Customer", "📂 Batch Prediction (CSV)", "📊 Model Comparison"])
+# ── Sidebar brand card (design only) ───────────────────────────────────────────
+SIDE_CSS = """
+<style>
+.st-key-sidecta {
+    background: linear-gradient(150deg, #6B5DF0 0%, #8B7CF8 100%);
+    border-radius: 14px;
+    padding: 16px 18px;
+    border: 0;
+}
+.st-key-sidecta * { color: #ffffff !important; }
+</style>
+"""
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# TAB 1 — Single Prediction
+# PAGE — Predict single customer
 # ═══════════════════════════════════════════════════════════════════════
-with tab1:
+def page_predict():
     st.subheader("Enter Customer Details")
     st.markdown("Fill in the form below and click **Predict** to see the result.")
 
     col1, col2, col3 = st.columns(3)
 
-    with col1:
+    with col1, st.container(border=True):
         st.markdown("**Demographics**")
-        gender          = st.selectbox("Gender", ["Male", "Female"])
-        senior_citizen  = st.selectbox("Senior Citizen", [0, 1], format_func=lambda x: "Yes" if x == 1 else "No")
-        partner         = st.selectbox("Has Partner?", ["Yes", "No"])
-        dependents      = st.selectbox("Has Dependents?", ["Yes", "No"])
+        gender          = st.selectbox("Gender", ["Male", "Female"], index=1)
+        senior_citizen  = st.selectbox("Senior Citizen", [0, 1], index=1, format_func=lambda x: "Yes" if x == 1 else "No")
+        partner         = st.selectbox("Has Partner?", ["Yes", "No"], index=1)
+        dependents      = st.selectbox("Has Dependents?", ["Yes", "No"], index=1)
 
-    with col2:
+    with col2, st.container(border=True):
         st.markdown("**Account Info**")
-        tenure          = st.slider("Tenure (months)", 0, 72, 12)
+        tenure          = st.slider("Tenure (months)", 0, 72, 1)
         contract        = st.selectbox("Contract Type", ["Month-to-month", "One year", "Two year"])
         paperless       = st.selectbox("Paperless Billing", ["Yes", "No"])
         payment_method  = st.selectbox("Payment Method", [
             "Electronic check", "Mailed check",
             "Bank transfer (automatic)", "Credit card (automatic)"
         ])
-        monthly_charges = st.number_input("Monthly Charges ($)", 0.0, 200.0, 65.0, step=0.5)
+        monthly_charges = st.number_input("Monthly Charges ($)", 0.0, 200.0, 110.0, step=0.5)
         total_charges   = st.number_input("Total Charges ($)", 0.0, 10000.0,
                                           float(tenure * monthly_charges), step=1.0)
 
-    with col3:
+    with col3, st.container(border=True):
         st.markdown("**Services**")
         phone_service   = st.selectbox("Phone Service", ["Yes", "No"])
         multiple_lines  = st.selectbox("Multiple Lines", ["Yes", "No"])
-        internet_svc    = st.selectbox("Internet Service", ["DSL", "Fiber optic", "No"])
-        online_security = st.selectbox("Online Security", ["Yes", "No"])
-        online_backup   = st.selectbox("Online Backup", ["Yes", "No"])
-        device_prot     = st.selectbox("Device Protection", ["Yes", "No"])
-        tech_support    = st.selectbox("Tech Support", ["Yes", "No"])
+        internet_svc    = st.selectbox("Internet Service", ["DSL", "Fiber optic", "No"], index=1)
+        online_security = st.selectbox("Online Security", ["Yes", "No"], index=1)
+        online_backup   = st.selectbox("Online Backup", ["Yes", "No"], index=1)
+        device_prot     = st.selectbox("Device Protection", ["Yes", "No"], index=1)
+        tech_support    = st.selectbox("Tech Support", ["Yes", "No"], index=1)
         streaming_tv    = st.selectbox("Streaming TV", ["Yes", "No"])
         streaming_movies= st.selectbox("Streaming Movies", ["Yes", "No"])
 
@@ -170,18 +168,18 @@ with tab1:
 
         st.divider()
         if pred[0] == 1:
-            st.error(f"### ⚠️ This customer is **likely to churn**")
+            st.error("### ⚠️ This customer is **likely to churn**")
         else:
-            st.success(f"### ✅ This customer is **not likely to churn**")
+            st.info("### This customer is **not likely to churn**", icon=":material/check_circle:")
 
         st.metric("Churn Probability", f"{confidence}%")
         st.caption(f"Predicted using: {model_choice}")
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# TAB 2 — Batch Prediction
+# PAGE — Batch prediction
 # ═══════════════════════════════════════════════════════════════════════
-with tab2:
+def page_batch():
     st.subheader("Upload a CSV File for Batch Predictions")
     st.markdown(
         "Upload a CSV with customer data (same format as the training dataset). "
@@ -212,7 +210,10 @@ with tab2:
                 if ids is not None:
                     results_df.insert(0, "customerID", ids.values)
 
-                st.success(f"Predictions complete! {int(preds.sum())} customers predicted to churn out of {len(preds)}.")
+                st.info(
+                    f"Predictions complete! {int(preds.sum())} customers predicted to churn out of {len(preds)}.",
+                    icon=":material/check_circle:",
+                )
                 st.dataframe(results_df)
 
                 csv_out = results_df.to_csv(index=False).encode("utf-8")
@@ -231,37 +232,25 @@ with tab2:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# TAB 3 — Model Comparison
+# PAGE — Model comparison
 # ═══════════════════════════════════════════════════════════════════════
-with tab3:
+def page_compare():
     st.subheader("How Do the Three Models Compare?")
     st.markdown(
         "All three models were trained on the same 80% of the dataset and evaluated on the remaining 20%."
     )
 
-    names     = list(model_results.keys())
-    accuracies = [model_results[n]["accuracy"] for n in names]
-    f1_scores  = [model_results[n]["f1"]       for n in names]
+    chart_rows = []
+    for name, scores in model_results.items():
+        chart_rows.append({"Model": name, "Metric": "Accuracy (%)", "Score": scores["accuracy"]})
+        chart_rows.append({"Model": name, "Metric": "F1 Score (%)", "Score": scores["f1"]})
+    chart_df = pd.DataFrame(chart_rows)
 
-    # Bar chart
-    fig, ax = plt.subplots(figsize=(8, 4))
-    x = np.arange(len(names))
-    width = 0.35
-    bars1 = ax.bar(x - width / 2, accuracies, width, label="Accuracy (%)", color="#4C72B0")
-    bars2 = ax.bar(x + width / 2, f1_scores,  width, label="F1 Score (%)",  color="#DD8452")
-
-    ax.set_ylabel("Score (%)")
-    ax.set_title("Model Comparison — Accuracy vs F1 Score")
-    ax.set_xticks(x)
-    ax.set_xticklabels(names)
-    ax.set_ylim(0, 100)
-    ax.legend()
-    ax.bar_label(bars1, padding=3, fmt="%.1f")
-    ax.bar_label(bars2, padding=3, fmt="%.1f")
-    ax.spines[["top", "right"]].set_visible(False)
-    plt.tight_layout()
-    st.pyplot(fig)
-    plt.close(fig)
+    with st.container(border=True):
+        st.bar_chart(
+            chart_df, x="Model", y="Score", color="Metric", stack=False,
+            alt="Accuracy and F1 score for each model",
+        )
 
     # Metrics table
     st.markdown("### Detailed Scores")
@@ -270,7 +259,6 @@ with tab3:
     st.dataframe(table_df, hide_index=True)
 
     # Plain-English model explanations
-    st.markdown("---")
     st.markdown("### What is each model doing?")
 
     with st.expander("Logistic Regression"):
@@ -291,3 +279,33 @@ with tab3:
             "(e.g. 'Is the contract month-to-month? → Yes → Is tenure < 12 months? → Yes → Predict Churn'). "
             "It creates a flowchart-like structure that is very easy to visualise and understand."
         )
+
+
+# ── Shell: logo, sidebar, navigation ───────────────────────────────────────────
+st.html(SIDE_CSS)
+st.logo(os.path.join(ASSETS_DIR, "logo.svg"),
+        icon_image=os.path.join(ASSETS_DIR, "icon.svg"), size="large")
+
+st.title("📡 Telecom Customer Churn Predictor")
+st.markdown(
+    "Predict whether a customer is likely to leave (churn) based on their account details. "
+    "Built with **Logistic Regression**, **KNN**, and **Decision Tree** models."
+)
+
+if not models_ready:
+    st.error(
+        "**Models not found.** Please run `python train_models.py` inside the `hs-churn-predictor/` folder first."
+    )
+    st.stop()
+
+with st.sidebar:
+    with st.container(key="sidecta"):
+        st.markdown("**Customer Churn Predictor**")
+        st.caption("Predict the likelihood of customer churn.")
+
+nav = st.navigation([
+    st.Page(page_predict, title="Predict Single Customer", icon=":material/person_search:", default=True),
+    st.Page(page_batch, title="Batch Prediction (CSV)", icon=":material/upload_file:"),
+    st.Page(page_compare, title="Model Comparison", icon=":material/bar_chart:"),
+])
+nav.run()

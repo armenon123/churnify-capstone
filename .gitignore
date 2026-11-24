@@ -9,5 +9,15 @@
 
 # VS Code
 .vscode/
-models/*.pkl
-models/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Claude Code / agent tooling
+.claude/
+.agents/
+
+# Local-only files (not part of the app)
+app_classic.py
+inspo.png

@@ -17,7 +17,7 @@ import joblib
 import os
 
 # ── 1. Load data ──────────────────────────────────────────────────────────────
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "WA_Fn-UseC_-Telco-Customer-Churn.csv")
+DATA_PATH = os.path.join(os.path.dirname(__file__), "WA_Fn-UseC_-Telco-Customer-Churn.csv")
 df = pd.read_csv(DATA_PATH)
 
 # ── 2. Clean ──────────────────────────────────────────────────────────────────

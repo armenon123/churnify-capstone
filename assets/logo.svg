@@ -1,0 +1,12 @@
+<svg width="168" height="36" viewBox="0 0 168 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mark" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B7CF8"/>
+      <stop offset="1" stop-color="#6B5DF0"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="32" height="32" rx="9" fill="url(#mark)"/>
+  <path d="M25 13.2a7 7 0 1 0 0 9.6" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="24.6" cy="18" r="2.1" fill="#ffffff"/>
+  <text x="44" y="24" font-family="'IBM Plex Sans','Inter',system-ui,sans-serif" font-size="19" font-weight="700" letter-spacing="-0.4" fill="#7B6CF6">Churnify</text>
+</svg>
